@@ -1,0 +1,83 @@
+name: Your Doctor CI/CD
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        abi: [armeabi-v7a, arm64-v8a, x86_64]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+ 
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '22'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.27.4'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: clean Project
+        run: flutter clean
+
+      - name: Build APKs
+        run: flutter build apk --split-per-abi
+
+
+      - name: Upload APK Artifacts (Individual Files)
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-${{ matrix.abi }}
+          path: build/app/outputs/flutter-apk/app-${{ matrix.abi }}-release.apk
+          
+      # - name: Create APKs directory (if not exists)
+      #   run: mkdir -p outputApks
+
+      # - name: Configure Git
+      #   run: |
+      #     git config --global user.name "Ah95ed"
+      #     git config --global user.email "Amhmeed31@gmail.com"
+      # - name: Clone Release Repository
+      #   env:
+      #     GH_TOKEN: ${{ secrets.TOKEN_ALL }}
+
+      #   run: |
+      #     git clone https://$GH_TOKEN@github.com/Ah95ed/resaturant_menu.git release-repo
+  
+      # - name: Copy APKs to Release Repo
+      #   run: |
+      #       mkdir -p release-repo/outputApks/${{ github.sha }}
+      #       cp build/app/outputs/flutter-apk/*.apk release-repo/outputApks/${{ github.sha }}/
+    
+      # - name: Copy APKs to directory
+      #   run: cp build/app/outputs/flutter-apk/*.apk outputApks/
+
+      # - name: Commit and Push APKs
+      #   run: |
+      #     git add outputApks/*.apk
+      #     git commit -m "ci: Update APK files [skip ci]"
+      #     git push origin HEAD:main
+
+      # - name: Upload APK artifacts
+      #   run: |
+      #     for apk in build/app/outputs/flutter-apk/*.apk; do
+      #       echo "Uploading $apk"
+      #       artifact_name=$(basename "$apk")
+      #       gh run upload $artifact_name "$apk"
+      #     done
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.TOKEN_ALL }}
