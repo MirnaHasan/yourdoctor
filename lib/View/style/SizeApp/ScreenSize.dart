@@ -4,7 +4,7 @@ import 'package:yourdoctor/View/style/SizeApp/SizeBuilder.dart';
 
 extension ScreenSize on BuildContext {
   bool get isLandscap=>
-      MediaQuery.of(this).orientation == Orientation.landscape;
+      MediaQuery.orientationOf(this) == Orientation.landscape;
 
   double get screenHeight => isLandscap
       ? MediaQuery.sizeOf(this).width
