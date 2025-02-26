@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:yourdoctor/View/style/SizeApp/ScreenSize.dart';
+import 'package:yourdoctor/View/style/SizeApp/SizeBuilder.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +22,11 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      home: const MyHomePage(title: 'Flutter'),
+      home: SizeBuilder(
+          baseSize: const Size(360, 690),
+          height: context.screenHeight,
+          width: context.screenWidth,
+          child: const MyHomePage(title: 'Flutter')),
     );
   }
 }
@@ -52,12 +58,14 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
+             Text(
               'You have pushed the button this many times:',
+              style: TextStyle(fontSize: context.getFontSize(14)),
             ),
             Text(
               '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: TextStyle(fontSize: context.getFontSize(18)),
+              
             ),
           ],
         ),
