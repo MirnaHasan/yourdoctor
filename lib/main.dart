@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:yourdoctor/View/style/SizeApp/ScreenSize.dart';
 import 'package:yourdoctor/View/style/SizeApp/SizeBuilder.dart';
 
-void main() {
+const supabaseUrl = 'https://hegshhijycsmmlaoktqq.supabase.co';
+const supabaseKey =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhlZ3NoaGlqeWNzbW1sYW9rdHFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA2ODQwOTEsImV4cCI6MjA1NjI2MDA5MX0.M-QNwRXfzZ2gVXL_nA74Vm6Axaexa365c9W2usZF5HY';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await init();
   runApp(const MyApp());
+}
+late final supabase ;
+Future<void> init() async {
+await Supabase.initialize(url: supabaseUrl, anonKey: supabaseKey);
+  
 }
 
 class MyApp extends StatelessWidget {
@@ -41,10 +53,19 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  void _incrementCounter() async {
+ try {
+    await Supabase.instance.client
+      .from('Patients')
+      .insert({
+     
+        'name': 'iPhone 15',
+      
+      });
+    print('تم إدخال البيانات بنجاح!');
+  } catch (e) {
+    print('حدث خطأ: $e');
+  }
   }
 
   @override
@@ -58,14 +79,13 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-             Text(
+            Text(
               'You have pushed the button this many times:',
               style: TextStyle(fontSize: context.getFontSize(14)),
             ),
             Text(
               '$_counter',
               style: TextStyle(fontSize: context.getFontSize(18)),
-              
             ),
           ],
         ),
